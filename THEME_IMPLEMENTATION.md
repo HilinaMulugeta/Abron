@@ -4,7 +4,7 @@
 This document details the comprehensive theme system implementation for the Abron restaurant application, based on the Profile.jsx color scheme. The theme provides consistent light and dark modes across the entire application.
 
 ## Color Palette
-The theme is based on the warm, Ethiopian-inspired colors from the Profile.jsx component:
+The theme is based on the warm, Ethiopian-inspired colors Green and brown from the logo
 
 ### Primary Colors
 - **Brand Gradient**: `linear-gradient(135deg, #f3b63b 0%, #d56a2b 52%, #2f5d4a 100%)`

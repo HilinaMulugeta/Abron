@@ -1,16 +1,76 @@
-# React + Vite
+# Abron
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Abron is a React food ordering web app for browsing Ethiopian dishes, managing a cart, placing orders, and maintaining a restaurant menu. It includes a customer storefront and a separate admin area, with light and dark themes.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Browse and search dishes by category, availability, and other filters.
+- View dish details, save favorites, and add items to the cart.
+- Complete checkout with delivery details and payment options.
+- View order history and order status.
+- Manage dishes, availability, and orders from the admin dashboard.
+- Switch between light and dark themes; the theme preference is saved in the browser.
+- Keep cart, favorites, menu, and order data in browser storage for local use.
 
-## React Compiler
+## Requirements
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js and npm
 
-## Expanding the ESLint configuration
+## Get started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev
+```
+
+Open the local URL printed by Vite in your browser.
+
+## Admin dashboard
+
+Open `/admin/login` and sign in with the demo account:
+
+- Email: `admin@abron.com`
+- Password: `admin123`
+
+The admin dashboard includes sales summaries, charts, dish inventory controls, and an order tracker. Authentication and data are implemented as local demo behavior; use a secure server-side auth and data service before deploying this app for real operations.
+
+## Routes
+
+| Path | Page |
+| --- | --- |
+| `/` | Customer home and featured dishes |
+| `/menu` or `/search` | Dish catalog and search |
+| `/menu/:id` or `/product/:id` | Dish details |
+| `/cart` | Shopping cart |
+| `/checkout` | Checkout |
+| `/order-confirmed` | Order confirmation and tracking |
+| `/orders` | Order history |
+| `/favorites` | Saved dishes |
+| `/profile` | Customer profile and preferences |
+| `/admin/login` | Admin sign-in |
+| `/admin/dashboard` | Admin overview |
+| `/admin/dishes` | Dish management |
+| `/admin/orders` | Order management |
+| `/admin/settings` | Admin profile settings |
+
+## Scripts
+
+```bash
+npm run dev      # Start the Vite development server
+npm run build    # Create a production build in dist/
+npm run preview  # Preview the production build locally
+npm run lint     # Run ESLint
+```
+
+## Project layout
+
+- `src/pages/` — customer home, search, profile, and product pages
+- `src/components/` — navigation, hero, footer, dish cards, and shared UI
+- `src/cart/`, `src/checkout/`, `src/orders/`, `src/favorites/` — customer ordering flows
+- `src/admin/` — admin login, dashboard, dish and order management
+- `src/theme/` — theme context, palette, and global theme styles
+- `src/api/` — menu data and local API helpers
+
+## Tech stack
+
+React, Vite, React Router, Tailwind CSS, Recharts, and React Icons.
