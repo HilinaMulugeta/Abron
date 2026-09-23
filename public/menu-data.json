@@ -1,0 +1,233 @@
+[
+  {
+    "id": "dish-1",
+    "name": "Doro",
+    "price": 1350,
+    "category": "Main",
+    "image": "/images/Doro.jpg",
+    "spicy": true,
+    "availableToday": true,
+    "description": "A festive, slow-cooked spicy chicken stew simmered in rich berbere spice blend and authentic spiced butter, traditionally accompanied by a hard-boiled egg."
+  },
+  {
+    "id": "dish-2",
+    "name": "Chechebsa",
+    "price": 400,
+    "category": "Breakfast",
+    "image": "/images/Chechebsa.jpg",
+    "spicy": false,
+    "availableToday": false,
+    "description": "Shredded, pan-fried kitcha flatbread tossed softly in fragrant niter kibbeh spiced butter and a touch of berbere, served warm."
+  },
+  {
+    "id": "dish-3",
+    "name": "Chips",
+    "price": 550,
+    "category": "Side",
+    "image": "/images/Chips.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "Crispy, golden-fried potato chips seasoned lightly with salt, perfect as a quick snack or a crunchy side dish."
+  },
+  {
+    "id": "dish-4",
+    "name": "Burger",
+    "price": 850,
+    "category": "Burgers",
+    "image": "/images/Burger.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "A juicy, grilled beef patty layered inside a soft bun with crisp lettuce, fresh tomatoes, onions, and signature house sauce."
+  },
+
+  {
+    "id": "dish-5",
+    "name": "Dulet",
+    "price": 500,
+    "category": "Breakfast",
+    "image": "/images/Dulet.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "A traditional, finely minced breakfast mixture of lean beef, tripe, and liver sautéed with spiced butter, garlic, and hot green peppers."
+  },
+  {
+    "id": "dish-6",
+    "name": "Fetira",
+    "price": 300,
+    "category": "Breakfast",
+    "image": "/images/Fetira.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "Crispy, layered pastry flatbread served warm, commonly enjoyed drizzled with sweet honey or cooked with an egg filling."
+  },
+  {
+    "id": "dish-7",
+    "name": "IceCream",
+    "price": 250,
+    "category": "Dessert",
+    "image": "/images/IceCream.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "Smooth and creamy chilled ice cream, offering a sweet and refreshing finish to clear the palate after a spicy meal."
+  },
+  {
+    "id": "dish-8",
+    "name": "Kategna",
+    "price": 200,
+    "category": "Side",
+    "image": "/images/Kategna.jpg",
+    "spicy": true,
+    "availableToday": true,
+    "description": "Toasted injera layers brushed generously with aromatic spiced butter and fiery berbere, offering a crispy, savory, and spicy bite."
+  },
+  {
+    "id": "dish-9",
+    "name": "Kitfo",
+    "price": 1200,
+    "category": "Main",
+    "image": "/images/Kitfo.jpg",
+    "spicy": true,
+    "availableToday": true,
+    "description": "Finely minced extra-lean beef warmed gently in mitmita spice and pure niter kibbeh, typically served raw, rare, or lightly cooked."
+  },
+  {
+    "id": "dish-10",
+    "name": "KuantaFirfr",
+    "price": 400,
+    "category": "Main",
+    "image": "/images/KuantaFirfr.jpg",
+    "spicy": true,
+    "availableToday": true,
+    "description": "Savory strips of dried beef jerky (kuanta) simmered into a spicy berbere sauce, tossed thoroughly with shredded, moist pieces of injera."
+  },
+  {
+    "id": "dish-11",
+    "name": "Lasagna",
+    "price": 750,
+    "category": "Breakfast",
+    "image": "/images/Lasagna.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "Layers of tender pasta sheets baked beautifully with a savory minced meat sauce, rich béchamel, and melted gooey cheese."
+  },
+  {
+    "id": "dish-12",
+    "name": "Mahberawi",
+    "price": 2850,
+    "category": "Main",
+    "image": "/images/Mahberawi.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "A grand, celebratory combination platter featuring an assortment of key meat dishes like tibs, wot, and kitfo served together over injera."
+  },
+  {
+    "id": "dish-13",
+    "name": "Mojitto",
+    "price": 250,
+    "category": "Drinks",
+    "image": "/images/Mojitto.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "A refreshing, ice-cold mocktail made with muddled fresh mint leaves, tart lime juice, sugar, and sparkling soda."
+  },
+  {
+    "id": "dish-14",
+    "name": "Noodle",
+    "price": 1450,
+    "category": "Main",
+    "image": "/images/Noodle.jpg",
+    "spicy": true,
+    "availableToday": true,
+    "description": "Stir-fried noodles cooked with crisp seasonal vegetables, savory soy sauce, and a spicy kick of fresh green chilies."
+  },
+  {
+    "id": "dish-15",
+    "name": "Pasta",
+    "price": 400,
+    "category": "Main",
+    "image": "/images/Pasta.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "Al dente pasta served with your choice of a rich, slow-simmered tomato marinara sauce or a flavorful minced meat bolognese."
+  },
+  {
+    "id": "dish-16",
+    "name": "Pizza",
+    "price": 1000,
+    "category": "Pizza",
+    "image": "/images/Pizza.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "Freshly baked pizza dough topped with a rich tomato baseline sauce, a heavy layer of melted mozzarella, and your favorite meat or veggie toppings."
+  },
+  {
+    "id": "dish-17",
+    "name": "RawMeat",
+    "price": 2500,
+    "category": "Main",
+    "image": "/images/RawMeat.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "Premium, fresh cuts of high-quality raw beef served in traditional style, accompanied by sharp mitmita powder and senafich (mustard) sauce."
+  },
+  {
+    "id": "dish-18",
+    "name": "Salad",
+    "price": 350,
+    "category": "side",
+    "image": "/images/Salad.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "A crisp, light salad of fresh lettuce, tomatoes, red onions, and green peppers tossed in a simple lemon and olive oil vinaigrette."
+  },
+  {
+    "id": "dish-19",
+    "name": "Shake",
+    "price": 450,
+    "category": "Drinks",
+    "image": "/images/Shake.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "A thick, velvety milkshake blended with premium dairy and your choice of flavorings, topped with whipped cream."
+  },
+  {
+    "id": "dish-20",
+    "name": "Shekla",
+    "price": 950,
+    "category": "Main",
+    "image": "/images/Shekla.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "Sizzling meat strips cooked with onions, garlic, and green chilies, served hot directly inside a traditional clay pot (shekla) with burning charcoal beneath."
+  },
+  {
+    "id": "dish-21",
+    "name": "Smoothy",
+    "price": 450,
+    "category": "Drinks",
+    "image": "/images/Smoothy.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "A refreshing blend of fresh seasonal fruits like mango, avocado, and papaya layered together beautifully in a chilled glass."
+  },
+  {
+    "id": "dish-22",
+    "name": "Tegabino",
+    "price": 450,
+    "category": "Main",
+    "image": "/images/Tegabino.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "A thick, savory clay-pot preparation of spiced chickpea powder (shiro) simmered rapidly with oil, onions, and boiling water."
+  },
+  {
+    "id": "dish-23",
+    "name": "Tibs",
+    "price": 850,
+    "category": "Main",
+    "image": "/images/Tibs.jpg",
+    "spicy": false,
+    "availableToday": true,
+    "description": "Tender cubes of beef or lamb sautéed quickly with sliced onions, minced garlic, aromatic rosemary branches, and mild green peppers."
+  }
+]
