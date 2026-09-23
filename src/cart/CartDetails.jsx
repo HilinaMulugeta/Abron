@@ -6,7 +6,9 @@ function CartDetails({ item }) {
   const { increaseQuantity, decreaseQuantity, removeFromCart } =
     useContext(ShopContext);
 
-  const { id, name, image, price, amount, description } = item;
+  const { id, name, image, price, amount, quantity, description } = item;
+  const itemQty = Number(amount ?? quantity ?? 1) || 1;
+  const itemTotal = Number(price || 0) * itemQty;
 
   return (
     <div className="flex items-center justify-between gap-3 py-4 border-b border-gray-100 last:border-b-0">
@@ -21,10 +23,12 @@ function CartDetails({ item }) {
             {name}
           </h3>
           <p className="text-[11px] text-gray-400 truncate max-w-[160px] sm:max-w-xs">
-            {description ? description.slice(0, 38) + "..." : `Traditional dish • ${amount}`}
+            {description
+              ? description.slice(0, 38) + "..."
+              : `Traditional dish • ${itemQty}`}
           </p>
           <span className="text-xs sm:text-sm font-extrabold text-green-700 block mt-1">
-            ETB {price}
+            ETB {itemTotal.toLocaleString()}
           </span>
         </div>
       </div>
@@ -41,7 +45,7 @@ function CartDetails({ item }) {
             <FiMinus className="text-xs" />
           </button>
           <span className="w-7 text-center text-xs font-bold text-gray-900">
-            {amount}
+            {itemQty}
           </span>
           <button
             onClick={() => increaseQuantity(id)}
@@ -67,4 +71,3 @@ function CartDetails({ item }) {
 }
 
 export default CartDetails;
-

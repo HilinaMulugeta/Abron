@@ -11,12 +11,44 @@ const INITIAL_ORDERS = [
     address: "Bole Medhanialem, Addis Ababa",
     area: "Bole",
     items: [
-      { id: "dish-1", name: "Doro Wot", title: "Doro Wot", amount: 1, quantity: 1, price: 380, image: "/images/Doro.jpg" },
-      { id: "dish-9", name: "Beef Tibs", title: "Beef Tibs", amount: 2, quantity: 2, price: 300, image: "/images/Tibs.jpg" },
+      {
+        id: "dish-1",
+        name: "Doro Wot",
+        title: "Doro Wot",
+        amount: 1,
+        quantity: 1,
+        price: 380,
+        image: "/images/Doro.jpg",
+      },
+      {
+        id: "dish-9",
+        name: "Beef Tibs",
+        title: "Beef Tibs",
+        amount: 2,
+        quantity: 2,
+        price: 300,
+        image: "/images/Tibs.jpg",
+      },
     ],
     itemsList: [
-      { id: "dish-1", name: "Doro Wot", title: "Doro Wot", amount: 1, quantity: 1, price: 380, image: "/images/Doro.jpg" },
-      { id: "dish-9", name: "Beef Tibs", title: "Beef Tibs", amount: 2, quantity: 2, price: 300, image: "/images/Tibs.jpg" },
+      {
+        id: "dish-1",
+        name: "Doro Wot",
+        title: "Doro Wot",
+        amount: 1,
+        quantity: 1,
+        price: 380,
+        image: "/images/Doro.jpg",
+      },
+      {
+        id: "dish-9",
+        name: "Beef Tibs",
+        title: "Beef Tibs",
+        amount: 2,
+        quantity: 2,
+        price: 300,
+        image: "/images/Tibs.jpg",
+      },
     ],
     itemsSummary: "Doro Wot x 1, Beef Tibs x 2",
     subtotal: 980,
@@ -35,12 +67,44 @@ const INITIAL_ORDERS = [
     address: "Kazanchis, Addis Ababa",
     area: "Kazanchis",
     items: [
-      { id: "dish-2", name: "Chechebsa", title: "Chechebsa", amount: 2, quantity: 2, price: 400, image: "/images/Chechebsa.jpg" },
-      { id: "dish-5", name: "Dulet", title: "Dulet", amount: 1, quantity: 1, price: 500, image: "/images/Dulet.jpg" },
+      {
+        id: "dish-2",
+        name: "Chechebsa",
+        title: "Chechebsa",
+        amount: 2,
+        quantity: 2,
+        price: 400,
+        image: "/images/Chechebsa.jpg",
+      },
+      {
+        id: "dish-5",
+        name: "Dulet",
+        title: "Dulet",
+        amount: 1,
+        quantity: 1,
+        price: 500,
+        image: "/images/Dulet.jpg",
+      },
     ],
     itemsList: [
-      { id: "dish-2", name: "Chechebsa", title: "Chechebsa", amount: 2, quantity: 2, price: 400, image: "/images/Chechebsa.jpg" },
-      { id: "dish-5", name: "Dulet", title: "Dulet", amount: 1, quantity: 1, price: 500, image: "/images/Dulet.jpg" },
+      {
+        id: "dish-2",
+        name: "Chechebsa",
+        title: "Chechebsa",
+        amount: 2,
+        quantity: 2,
+        price: 400,
+        image: "/images/Chechebsa.jpg",
+      },
+      {
+        id: "dish-5",
+        name: "Dulet",
+        title: "Dulet",
+        amount: 1,
+        quantity: 1,
+        price: 500,
+        image: "/images/Dulet.jpg",
+      },
     ],
     itemsSummary: "Chechebsa x 2, Dulet x 1",
     subtotal: 1300,
@@ -59,10 +123,26 @@ const INITIAL_ORDERS = [
     address: "Sarbet, Addis Ababa",
     area: "Sarbet",
     items: [
-      { id: "dish-16", name: "Special Pizza", title: "Special Pizza", amount: 1, quantity: 1, price: 1000, image: "/images/Pizza.jpg" },
+      {
+        id: "dish-16",
+        name: "Special Pizza",
+        title: "Special Pizza",
+        amount: 1,
+        quantity: 1,
+        price: 1000,
+        image: "/images/Pizza.jpg",
+      },
     ],
     itemsList: [
-      { id: "dish-16", name: "Special Pizza", title: "Special Pizza", amount: 1, quantity: 1, price: 1000, image: "/images/Pizza.jpg" },
+      {
+        id: "dish-16",
+        name: "Special Pizza",
+        title: "Special Pizza",
+        amount: 1,
+        quantity: 1,
+        price: 1000,
+        image: "/images/Pizza.jpg",
+      },
     ],
     itemsSummary: "Special Pizza x 1",
     subtotal: 1000,
@@ -98,23 +178,32 @@ const ShopContextProvider = ({ children }) => {
             const itemsArr = Array.isArray(o.items)
               ? o.items
               : Array.isArray(o.itemsList)
-              ? o.itemsList
-              : [
-                  {
-                    id: "dish-1",
-                    name: typeof o.items === "string" ? o.items.split("x")[0]?.trim() || "Doro Wot" : "Ethiopian Dish",
-                    title: typeof o.items === "string" ? o.items.split("x")[0]?.trim() || "Doro Wot" : "Ethiopian Dish",
-                    amount: 1,
-                    quantity: 1,
-                    price: o.total || 450,
-                    image: "/images/Doro.jpg",
-                  },
-                ];
+                ? o.itemsList
+                : [
+                    {
+                      id: "dish-1",
+                      name:
+                        typeof o.items === "string"
+                          ? o.items.split("x")[0]?.trim() || "Doro Wot"
+                          : "Ethiopian Dish",
+                      title:
+                        typeof o.items === "string"
+                          ? o.items.split("x")[0]?.trim() || "Doro Wot"
+                          : "Ethiopian Dish",
+                      amount: 1,
+                      quantity: 1,
+                      price: o.total || 450,
+                      image: "/images/Doro.jpg",
+                    },
+                  ];
             return {
               ...o,
               items: itemsArr,
               itemsList: itemsArr,
-              itemsSummary: typeof o.items === "string" ? o.items : o.itemsSummary || "Delicious Ethiopian Dishes",
+              itemsSummary:
+                typeof o.items === "string"
+                  ? o.items
+                  : o.itemsSummary || "Delicious Ethiopian Dishes",
             };
           });
         }
@@ -135,11 +224,26 @@ const ShopContextProvider = ({ children }) => {
     }
   });
 
+  const normalizeCartItem = (item, fallbackQty = 1) => {
+    const safeQty = Number(item?.quantity ?? item?.amount ?? fallbackQty);
+    const validQty =
+      Number.isFinite(safeQty) && safeQty > 0 ? safeQty : fallbackQty;
+    return {
+      ...item,
+      quantity: validQty,
+      amount: validQty,
+    };
+  };
+
   // Cart state
   const [cart, setCart] = useState(() => {
     try {
       const saved = localStorage.getItem("abron_cart");
-      return saved ? JSON.parse(saved) : [];
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed)
+        ? parsed.map((item) => normalizeCartItem(item, 1))
+        : [];
     } catch {
       return [];
     }
@@ -167,8 +271,8 @@ const ShopContextProvider = ({ children }) => {
               category: d.name?.toLowerCase().includes("burger")
                 ? "Burgers"
                 : d.name?.toLowerCase().includes("pizza")
-                ? "Pizza"
-                : d.category,
+                  ? "Pizza"
+                  : d.category,
               availableToday: d.availableToday !== false,
               status: d.availableToday !== false ? "Available" : "Out of Stock",
             }));
@@ -179,11 +283,13 @@ const ShopContextProvider = ({ children }) => {
           const updated = prev.map((d) => ({
             ...d,
             category:
-              d.name?.toLowerCase().includes("burger") && (d.category === "Main" || !d.category)
+              d.name?.toLowerCase().includes("burger") &&
+              (d.category === "Main" || !d.category)
                 ? "Burgers"
-                : d.name?.toLowerCase().includes("pizza") && (d.category === "Main" || !d.category)
-                ? "Pizza"
-                : d.category,
+                : d.name?.toLowerCase().includes("pizza") &&
+                    (d.category === "Main" || !d.category)
+                  ? "Pizza"
+                  : d.category,
           }));
           localStorage.setItem("abron_dishes", JSON.stringify(updated));
           return updated;
@@ -226,14 +332,18 @@ const ShopContextProvider = ({ children }) => {
   // Subtotal calculation
   const subtotal = useMemo(() => {
     return cart.reduce((acc, item) => {
-      const price = parseFloat(item.price) || 0;
-      return acc + price * item.amount;
+      const price = Number(item.price) || 0;
+      const qty = Number(item.amount ?? item.quantity ?? 1) || 1;
+      return acc + price * qty;
     }, 0);
   }, [cart]);
 
   // Total quantity in cart
   const quantity = useMemo(() => {
-    return cart.reduce((acc, item) => acc + item.amount, 0);
+    return cart.reduce(
+      (acc, item) => acc + (Number(item.amount ?? item.quantity ?? 1) || 1),
+      0,
+    );
   }, [cart]);
 
   const [selectedArea, setSelectedArea] = useState("Bole");
@@ -315,58 +425,87 @@ const ShopContextProvider = ({ children }) => {
     if (!product) return false;
 
     // Check if the dish is currently available
-    const liveDish = products.find((p) => String(p.id) === String(id)) || product;
+    const liveDish =
+      products.find((p) => String(p.id) === String(id)) || product;
     if (!isDishAvailable(liveDish)) {
       toast.error(`"${liveDish.name}" is currently unavailable today!`);
       return false;
     }
 
-    const qty = typeof quantityToAdd === "number" && quantityToAdd > 0 ? quantityToAdd : 1;
+    const qty =
+      typeof quantityToAdd === "number" && quantityToAdd > 0
+        ? quantityToAdd
+        : 1;
 
-    const existing = cart.find((item) => String(item.id) === String(id));
-    if (existing) {
-      setCart(
-        cart.map((item) =>
+    setCart((prevCart) => {
+      const existing = prevCart.find((item) => String(item.id) === String(id));
+      if (existing) {
+        const nextQuantity =
+          (Number(existing.amount ?? existing.quantity ?? 1) || 1) + qty;
+        const updatedCart = prevCart.map((item) =>
           String(item.id) === String(id)
-            ? { ...item, amount: item.amount + qty }
-            : item
-        )
+            ? normalizeCartItem(
+                { ...item, amount: nextQuantity, quantity: nextQuantity },
+                nextQuantity,
+              )
+            : item,
+        );
+        toast.success(`Updated quantity for ${liveDish.name}`);
+        return updatedCart;
+      }
+
+      const newItem = normalizeCartItem(
+        { ...liveDish, amount: qty, quantity: qty },
+        qty,
       );
-      toast.success(`Updated quantity for ${liveDish.name}`);
-    } else {
-      setCart([...cart, { ...liveDish, amount: qty }]);
       toast.success(`${liveDish.name} added to cart!`);
-    }
+      return [...prevCart, newItem];
+    });
+
     return true;
   };
 
   const removeFromCart = (id) => {
-    setCart(cart.filter((item) => String(item.id) !== String(id)));
+    setCart((prevCart) =>
+      prevCart.filter((item) => String(item.id) !== String(id)),
+    );
     toast.info("Item removed from cart");
   };
 
   const increaseQuantity = (id) => {
-    setCart(
-      cart.map((item) =>
-        String(item.id) === String(id)
-          ? { ...item, amount: item.amount + 1 }
-          : item
-      )
+    setCart((prevCart) =>
+      prevCart.map((item) => {
+        if (String(item.id) !== String(id)) return item;
+        const nextQuantity =
+          (Number(item.amount ?? item.quantity ?? 1) || 1) + 1;
+        return normalizeCartItem(
+          { ...item, amount: nextQuantity, quantity: nextQuantity },
+          nextQuantity,
+        );
+      }),
     );
   };
 
   const decreaseQuantity = (id) => {
-    const item = cart.find((it) => String(it.id) === String(id));
-    if (!item) return;
-    if (item.amount <= 1) {
-      removeFromCart(id);
-    } else {
-      setCart(
-        cart.map((it) =>
-          String(it.id) === String(id) ? { ...it, amount: it.amount - 1 } : it
-        )
-      );
-    }
+    setCart((prevCart) => {
+      const item = prevCart.find((it) => String(it.id) === String(id));
+      if (!item) return prevCart;
+
+      const currentQuantity = Number(item.amount ?? item.quantity ?? 1) || 1;
+      if (currentQuantity <= 1) {
+        toast.info("Item removed from cart");
+        return prevCart.filter((it) => String(it.id) !== String(id));
+      }
+
+      return prevCart.map((it) => {
+        if (String(it.id) !== String(id)) return it;
+        const nextQuantity = currentQuantity - 1;
+        return normalizeCartItem(
+          { ...it, amount: nextQuantity, quantity: nextQuantity },
+          nextQuantity,
+        );
+      });
+    });
   };
 
   const clearCart = () => {
@@ -385,12 +524,20 @@ const ShopContextProvider = ({ children }) => {
       return true;
     }
     if (cleanCode === "HABESHA10") {
-      setPromo({ code: "HABESHA10", percent: 10, label: "10% Special Discount" });
+      setPromo({
+        code: "HABESHA10",
+        percent: 10,
+        label: "10% Special Discount",
+      });
       toast.success("Promo code HABESHA10 applied! 10% discount applied.");
       return true;
     }
     if (cleanCode === "FREESHIP") {
-      setPromo({ code: "FREESHIP", type: "free_shipping", label: "Free Delivery" });
+      setPromo({
+        code: "FREESHIP",
+        type: "free_shipping",
+        label: "Free Delivery",
+      });
       toast.success("Free delivery promo code applied!");
       return true;
     }
@@ -448,8 +595,8 @@ const ShopContextProvider = ({ children }) => {
             updatedData.status !== undefined
               ? updatedData.status
               : updatedData.availableToday === false
-              ? "Out of Stock"
-              : "Available";
+                ? "Out of Stock"
+                : "Available";
           const availableToday =
             updatedData.availableToday !== undefined
               ? updatedData.availableToday
@@ -463,13 +610,15 @@ const ShopContextProvider = ({ children }) => {
           };
         }
         return dish;
-      })
+      }),
     );
     toast.success("Dish updated successfully!");
   };
 
   const deleteDish = (id) => {
-    setProducts((prev) => prev.filter((dish) => String(dish.id) !== String(id)));
+    setProducts((prev) =>
+      prev.filter((dish) => String(dish.id) !== String(id)),
+    );
     toast.success("Dish deleted successfully!");
   };
 
@@ -479,9 +628,7 @@ const ShopContextProvider = ({ children }) => {
         if (String(dish.id) === String(id)) {
           const isNowAvailable = !isDishAvailable(dish);
           const newStatus = isNowAvailable ? "Available" : "Out of Stock";
-          toast.info(
-            `"${dish.name}" is now marked as ${newStatus}`
-          );
+          toast.info(`"${dish.name}" is now marked as ${newStatus}`);
           return {
             ...dish,
             availableToday: isNowAvailable,
@@ -489,7 +636,7 @@ const ShopContextProvider = ({ children }) => {
           };
         }
         return dish;
-      })
+      }),
     );
   };
 
@@ -504,15 +651,18 @@ const ShopContextProvider = ({ children }) => {
 
     const itemsArray =
       cart.length > 0
-        ? cart.map((it) => ({
-            id: it.id,
-            name: it.name,
-            title: it.name,
-            amount: it.amount || 1,
-            quantity: it.amount || 1,
-            price: it.price || 0,
-            image: it.image || it.img || "/images/Doro.jpg",
-          }))
+        ? cart.map((it) => {
+            const itemQty = Number(it.amount ?? it.quantity ?? 1) || 1;
+            return {
+              id: it.id,
+              name: it.name,
+              title: it.name,
+              amount: itemQty,
+              quantity: itemQty,
+              price: it.price || 0,
+              image: it.image || it.img || "/images/Doro.jpg",
+            };
+          })
         : [
             {
               id: "dish-1",
@@ -526,8 +676,9 @@ const ShopContextProvider = ({ children }) => {
           ];
 
     const itemsSummary =
-      itemsArray.map((it) => `${it.name} x ${it.amount}`).join(", ") ||
-      "Traditional Ethiopian Dishes";
+      itemsArray
+        .map((it) => `${it.name} x ${it.amount ?? it.quantity ?? 1}`)
+        .join(", ") || "Traditional Ethiopian Dishes";
 
     const newOrder = {
       id: orderNum,
@@ -557,8 +708,8 @@ const ShopContextProvider = ({ children }) => {
   const updateOrderStatus = (orderId, newStatus) => {
     setOrders((prev) =>
       prev.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
+        order.id === orderId ? { ...order, status: newStatus } : order,
+      ),
     );
     toast.success(`Order ${orderId} updated to: ${newStatus}`);
   };
@@ -584,10 +735,25 @@ const ShopContextProvider = ({ children }) => {
       minute: "2-digit",
     })}`;
 
-    const itemsCost = (Number(randomDish1.price) || 380) + (Number(randomDish2.price) || 300);
+    const itemsCost =
+      (Number(randomDish1.price) || 380) + (Number(randomDish2.price) || 300);
     const simItems = [
-      { id: randomDish1.id || "dish-1", name: randomDish1.name, title: randomDish1.name, amount: 1, quantity: 1, price: randomDish1.price },
-      { id: randomDish2.id || "dish-2", name: randomDish2.name, title: randomDish2.name, amount: 1, quantity: 1, price: randomDish2.price },
+      {
+        id: randomDish1.id || "dish-1",
+        name: randomDish1.name,
+        title: randomDish1.name,
+        amount: 1,
+        quantity: 1,
+        price: randomDish1.price,
+      },
+      {
+        id: randomDish2.id || "dish-2",
+        name: randomDish2.name,
+        title: randomDish2.name,
+        amount: 1,
+        quantity: 1,
+        price: randomDish2.price,
+      },
     ];
     const simOrder = {
       id: orderNum,
@@ -656,4 +822,3 @@ const ShopContextProvider = ({ children }) => {
 };
 
 export default ShopContextProvider;
-
