@@ -10,15 +10,16 @@ import {
   FiFileText,
   FiArrowRight,
   FiX,
-  FiPhone,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import MobileAppShell from "../components/MobileAppShell";
 import { ShopContext } from "../components/ShopContext";
+import { useAuth } from "../auth/AuthContext";
 
 function OrderHistory() {
-  const { orders, updateOrderStatus, addToCart } = useContext(ShopContext);
+  const { orders, addToCart, products } = useContext(ShopContext);
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedReceipt, setSelectedReceipt] = useState(null);
 
@@ -58,33 +59,14 @@ function OrderHistory() {
     return "Traditional Ethiopian Meal";
   };
 
+  const customerOrders = user ? orders.filter((order) => order.userId === user.id || order.customerEmail === user.email) : [];
   // Active vs Past orders
-  const activeOrders = orders.filter(
+  const activeOrders = customerOrders.filter(
     (o) => o.status === "Placed" || o.status === "Preparing" || o.status === "On the Way"
   );
-  const pastOrders = orders.filter(
+  const pastOrders = customerOrders.filter(
     (o) => o.status === "Delivered" || o.status === "Canceled"
   );
-
-  // Next status progression helper for demo
-  const getNextStatus = (current) => {
-    switch (current) {
-      case "Placed":
-        return "Preparing";
-      case "Preparing":
-        return "On the Way";
-      case "On the Way":
-        return "Delivered";
-      default:
-        return "Delivered";
-    }
-  };
-
-  const handleAdvanceStatus = (orderId, currentStatus) => {
-    const nextStatus = getNextStatus(currentStatus);
-    updateOrderStatus(orderId, nextStatus);
-    toast.info(`Order ${orderId} updated to: ${nextStatus}`);
-  };
 
   const handleReorder = (order) => {
     const itemsToOrder = getOrderItemsList(order);
@@ -110,13 +92,15 @@ function OrderHistory() {
             <FiChevronLeft className="text-base" /> Back to menu
           </Link>
           <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">
-            {orders.length} Total Orders
+            {customerOrders.length} Total Orders
           </span>
         </div>
 
         <h1 className="text-2xl font-black text-gray-900 mb-6">Order History</h1>
 
         {/* ACTIVE ORDERS SECTION */}
+        {!user && <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center text-sm text-gray-600">Sign in to see your orders and live status updates.</div>}
+        {user && customerOrders.length === 0 && <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center text-sm text-gray-600">Your order history will appear here after your first checkout.</div>}
         {activeOrders.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center justify-between mb-3">
@@ -246,19 +230,13 @@ function OrderHistory() {
                     <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
                       <Link
                         to="/order-confirmed"
+                        state={{ order }}
                         className="inline-flex items-center gap-1 text-xs font-bold text-green-700 hover:text-green-800 transition"
                       >
                         View Driver Card & Live Map <FiArrowRight />
                       </Link>
 
-                      {/* Demo progression button */}
-                      <button
-                        onClick={() => handleAdvanceStatus(order.id, order.status)}
-                        className="px-3 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border border-green-200"
-                        title="Simulate driver moving forward in delivery flow"
-                      >
-                        <FiRotateCw className="text-xs" /> Advance Status (Demo)
-                      </button>
+                      <span className="text-xs font-semibold text-gray-500">Status: {order.status}</span>
                     </div>
                   </div>
                 );

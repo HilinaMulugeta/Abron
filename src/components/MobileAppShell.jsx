@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import {
   FiHome,
   FiSearch,
@@ -13,6 +13,8 @@ import { useTheme } from "../theme/ThemeContext";
 import { getThemeClass } from "../theme/components";
 import ThemeToggle from "../theme/ThemeToggle";
 import Footer from "./Footer";
+import { useAuth } from "../auth/AuthContext";
+import LoginSignupModal from "../auth/LoginSignupModal";
 import "./customer.css";
 
 export default function MobileAppShell({ children }) {
@@ -20,6 +22,8 @@ export default function MobileAppShell({ children }) {
   const { quantity = 0, orders = [], favorites = [] } = context || {};
   const location = useLocation();
   const { isDarkMode } = useTheme();
+  const { user, logout } = useAuth();
+  const [authOpen, setAuthOpen] = useState(false);
 
   // Early return if context is not available
   if (!context) {
@@ -98,6 +102,7 @@ export default function MobileAppShell({ children }) {
 
         {/* Right Action Icons */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {user ? <div className="hidden md:flex items-center gap-2 text-xs font-semibold"><span className={mutedClasses}>Hi, {user.name?.split(" ")[0]}</span><button onClick={logout} className="text-[#2f5d4a] hover:underline">Sign out</button></div> : <button onClick={() => setAuthOpen(true)} className="hidden md:inline-flex rounded-lg bg-[#2f5d4a] px-3 py-2 text-xs font-bold text-white">Sign in</button>}
           <ThemeToggle />
           <Link
             to="/search"
@@ -153,6 +158,7 @@ export default function MobileAppShell({ children }) {
 
       {/* Modern Pinned Footer */}
       <Footer />
+      <LoginSignupModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
 
       {/* Mobile Fixed Bottom Navigation */}
       <nav className="customer-bottom-nav">

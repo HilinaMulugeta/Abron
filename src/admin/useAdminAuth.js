@@ -10,6 +10,11 @@ export function useAdminAuth() {
       setIsAdmin(true);
     }
     setLoading(false);
+    const syncAdmin = (event) => {
+      if (event.key === "admin_token") setIsAdmin(Boolean(event.newValue));
+    };
+    window.addEventListener("storage", syncAdmin);
+    return () => window.removeEventListener("storage", syncAdmin);
   }, []);
 
   const login = (email, password) => {

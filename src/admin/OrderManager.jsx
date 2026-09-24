@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import { ShopContext } from "../components/ShopContext";
-import { FiRefreshCw, FiEye, FiX } from "react-icons/fi";
+import { FiEye, FiX } from "react-icons/fi";
 
 export default function OrderManager() {
-  const { orders, updateOrderStatus, simulateNewOrder } = useContext(ShopContext);
+  const { orders, updateOrderStatus } = useContext(ShopContext);
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -67,14 +67,6 @@ export default function OrderManager() {
             className="text-xs px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-green-500 bg-white"
           />
 
-          <button
-            onClick={simulateNewOrder}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition shadow-xs cursor-pointer"
-            title="Simulate incoming order"
-          >
-            <FiRefreshCw className="text-xs" />
-            <span>+ Simulate Order</span>
-          </button>
         </div>
       </div>
 

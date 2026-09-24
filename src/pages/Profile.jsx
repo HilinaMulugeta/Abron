@@ -17,7 +17,7 @@ import {
   FiEdit2,
   FiX,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import MobileAppShell from "../components/MobileAppShell";
 import { ShopContext } from "../components/ShopContext";
@@ -29,14 +29,15 @@ export default function Profile() {
     useContext(ShopContext);
 
   // Get auth functions
-  const { user: authUser, logout } = useAuth();
+  const { user: authUser, logout, updateProfile } = useAuth();
+  const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
 
   const defaultUser = {
-    name: "Guest User",
-    email: "guest@abron.com",
-    phone: "+251 911 234 567",
-    address: "23 Bole Road, Atlas Area, Addis Ababa",
+    name: "Guest",
+    email: "",
+    phone: "",
+    address: "",
     paymentMethod: "Cash on Delivery",
     language: "English",
     darkMode: false,
@@ -44,27 +45,6 @@ export default function Profile() {
   };
 
   const [user, setUser] = useState(authUser || defaultUser);
-
-  useEffect(() => {
-    if (authUser) {
-      setUser(authUser);
-    }
-  }, [authUser]);
-
-  // Local settings that aren't part of auth
-  const [settings, setSettings] = useState(() => {
-    try {
-      const saved = localStorage.getItem("abron_user_settings");
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // fallback
-    }
-    return {
-      language: "English",
-      darkMode: false,
-      notifications: true,
-    };
-  });
 
   const [openPanel, setOpenPanel] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -77,16 +57,23 @@ export default function Profile() {
   });
 
   // Saved addresses list
-  const [addresses, setAddresses] = useState([
-    { id: 1, label: "Home", text: "Gerji, Addis Ababa" },
-    { id: 2, label: "Work", text: "Kazanchis, ECA Building, 4th Floor" },
-    {
-      id: 3,
-      label: "Family",
-      text: "CMC Michael, Tsehay Real Estate, Villa 12",
-    },
-  ]);
+  const [addresses, setAddresses] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(`abron_addresses_${authUser?.id}`) || "[]");
+      return saved.length ? saved : authUser?.address ? [{ id: "default", label: "Delivery", text: authUser.address }] : [];
+    } catch { return authUser?.address ? [{ id: "default", label: "Delivery", text: authUser.address }] : []; }
+  });
   const [newAddress, setNewAddress] = useState("");
+
+  useEffect(() => {
+    if (authUser) {
+      setUser(authUser);
+      try {
+        const saved = JSON.parse(localStorage.getItem(`abron_addresses_${authUser.id}`) || "[]");
+        setAddresses(saved.length ? saved : authUser.address ? [{ id: "default", label: "Delivery", text: authUser.address }] : []);
+      } catch { setAddresses(authUser.address ? [{ id: "default", label: "Delivery", text: authUser.address }] : []); }
+    }
+  }, [authUser]);
 
   // Payment methods list
   const paymentMethods = [
@@ -96,7 +83,7 @@ export default function Profile() {
       desc: "Pay cash or Telebirr upon arrival",
       icon: "💵",
     },
-    { id: "telebirr", name: "Telebirr", desc: "+251 911 *** 567", icon: "📱" },
+    { id: "telebirr", name: "Telebirr", desc: user.phone ? `Wallet phone ending ${user.phone.slice(-3)}` : "Add a phone number in your profile", icon: "📱" },
     {
       id: "cbe",
       name: "CBE Birr",
@@ -105,26 +92,27 @@ export default function Profile() {
     },
     {
       id: "chapa",
-      name: "Chapa / Card",
-      desc: "Fast online checkout",
+      name: "Card on Delivery",
+      desc: "Pay by card at handoff",
       icon: "💳",
     },
   ];
 
   // Keep local profile copy in sync; theme is owned by ThemeContext
-  useEffect(() => {
-    localStorage.setItem("abron_user_profile", JSON.stringify(user));
-  }, [user]);
-
-  const handleSaveProfile = (e) => {
+  const handleSaveProfile = async (e) => {
     e.preventDefault();
-    setUser((prev) => ({ ...prev, ...editForm }));
+    if (!authUser) { toast.info("Sign in to save your profile."); return; }
+    try {
+      const saved = await updateProfile(editForm);
+      setUser((prev) => ({ ...prev, ...saved }));
+    } catch (error) { toast.error(error.message || "Could not save profile."); return; }
     setOpenPanel(null);
     toast.success("Profile updated successfully!");
   };
 
   const handleSelectAddress = (addrText) => {
     setUser((prev) => ({ ...prev, address: addrText }));
+    if (authUser) updateProfile({ address: addrText }).catch((error) => toast.error(error.message));
     toast.success(`Default delivery address set to: ${addrText.split(",")[0]}`);
   };
 
@@ -136,33 +124,38 @@ export default function Profile() {
       label: "Other",
       text: newAddress.trim(),
     };
-    setAddresses((prev) => [...prev, newEntry]);
     setUser((prev) => ({ ...prev, address: newEntry.text }));
+    const nextAddresses = [...addresses, newEntry];
+    setAddresses(nextAddresses);
+    localStorage.setItem(`abron_addresses_${authUser?.id || "guest"}`, JSON.stringify(nextAddresses));
+    if (authUser) updateProfile({ address: newEntry.text }).catch((error) => toast.error(error.message));
     setNewAddress("");
     toast.success("New address added and selected!");
   };
 
   const handleSelectPayment = (methodName) => {
     setUser((prev) => ({ ...prev, paymentMethod: methodName }));
+    if (authUser) updateProfile({ paymentMethod: methodName }).catch((error) => toast.error(error.message));
     toast.success(`Default payment updated to ${methodName}`);
   };
 
   const handleToggleDarkMode = () => {
     toggleTheme();
     setUser((prev) => ({ ...prev, darkMode: !isDarkMode }));
+    if (authUser) updateProfile({ darkMode: !isDarkMode }).catch((error) => toast.error(error.message));
   };
 
   const handleToggleNotifications = () => {
-    setUser((prev) => {
-      const nextVal = !prev.notifications;
-      toast.info(`Notifications turned ${nextVal ? "ON" : "OFF"}`);
-      return { ...prev, notifications: nextVal };
-    });
+    const nextVal = !user.notifications;
+    setUser((prev) => ({ ...prev, notifications: nextVal }));
+    if (authUser) updateProfile({ notifications: nextVal }).catch((error) => toast.error(error.message));
+    toast.info(`Notifications turned ${nextVal ? "ON" : "OFF"}`);
   };
 
   const handleLogout = () => {
     setShowLogoutModal(false);
     logout(); // Actually call the logout function
+    navigate("/");
     toast.success("You have been logged out successfully!");
   };
 
@@ -270,10 +263,10 @@ export default function Profile() {
           </button>
           <div className="bg-[#fffaf4] dark:bg-[#182b25] p-3.5 rounded-xl border border-[#e8dcc5] dark:border-[#2d413b] shadow-[0_10px_20px_rgba(24,35,30,0.05)] text-center">
             <strong className="block text-xl font-black text-[#e0a632] dark:text-[#f4c867]">
-              4.9 ★
+              {authUser ? "Active" : "Guest"}
             </strong>
             <small className="text-[11px] font-semibold text-[#5d6f67] dark:text-[#c9d9d0]">
-              Rating
+              Account
             </small>
           </div>
         </div>
@@ -730,10 +723,8 @@ export default function Profile() {
                   <select
                     value={user.language}
                     onChange={(e) => {
-                      setUser((prev) => ({
-                        ...prev,
-                        language: e.target.value,
-                      }));
+                      setUser((prev) => ({ ...prev, language: e.target.value }));
+                      if (authUser) updateProfile({ language: e.target.value }).catch((error) => toast.error(error.message));
                       toast.success(`Language set to ${e.target.value}`);
                     }}
                     className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"

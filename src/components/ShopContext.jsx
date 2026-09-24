@@ -3,158 +3,7 @@ import { toast } from "react-toastify";
 
 export const ShopContext = createContext();
 
-const INITIAL_ORDERS = [
-  {
-    id: "#AE-9482",
-    customer: "Solomon Alelu",
-    phone: "+251 911 234 567",
-    address: "Bole Medhanialem, Addis Ababa",
-    area: "Bole",
-    items: [
-      {
-        id: "dish-1",
-        name: "Doro Wot",
-        title: "Doro Wot",
-        amount: 1,
-        quantity: 1,
-        price: 380,
-        image: "/images/Doro.jpg",
-      },
-      {
-        id: "dish-9",
-        name: "Beef Tibs",
-        title: "Beef Tibs",
-        amount: 2,
-        quantity: 2,
-        price: 300,
-        image: "/images/Tibs.jpg",
-      },
-    ],
-    itemsList: [
-      {
-        id: "dish-1",
-        name: "Doro Wot",
-        title: "Doro Wot",
-        amount: 1,
-        quantity: 1,
-        price: 380,
-        image: "/images/Doro.jpg",
-      },
-      {
-        id: "dish-9",
-        name: "Beef Tibs",
-        title: "Beef Tibs",
-        amount: 2,
-        quantity: 2,
-        price: 300,
-        image: "/images/Tibs.jpg",
-      },
-    ],
-    itemsSummary: "Doro Wot x 1, Beef Tibs x 2",
-    subtotal: 980,
-    deliveryFee: 100,
-    discount: 0,
-    total: 1480,
-    status: "Preparing",
-    date: "Today, 12:40 PM",
-    paymentMethod: "Cash on Delivery",
-    instructions: "Please bring extra spicy Awaze sauce",
-  },
-  {
-    id: "#AE-9481",
-    customer: "Helen Tesfaye",
-    phone: "+251 922 456 789",
-    address: "Kazanchis, Addis Ababa",
-    area: "Kazanchis",
-    items: [
-      {
-        id: "dish-2",
-        name: "Chechebsa",
-        title: "Chechebsa",
-        amount: 2,
-        quantity: 2,
-        price: 400,
-        image: "/images/Chechebsa.jpg",
-      },
-      {
-        id: "dish-5",
-        name: "Dulet",
-        title: "Dulet",
-        amount: 1,
-        quantity: 1,
-        price: 500,
-        image: "/images/Dulet.jpg",
-      },
-    ],
-    itemsList: [
-      {
-        id: "dish-2",
-        name: "Chechebsa",
-        title: "Chechebsa",
-        amount: 2,
-        quantity: 2,
-        price: 400,
-        image: "/images/Chechebsa.jpg",
-      },
-      {
-        id: "dish-5",
-        name: "Dulet",
-        title: "Dulet",
-        amount: 1,
-        quantity: 1,
-        price: 500,
-        image: "/images/Dulet.jpg",
-      },
-    ],
-    itemsSummary: "Chechebsa x 2, Dulet x 1",
-    subtotal: 1300,
-    deliveryFee: 100,
-    discount: 0,
-    total: 1400,
-    status: "Delivered",
-    date: "Today, 11:15 AM",
-    paymentMethod: "Telebirr",
-    instructions: "",
-  },
-  {
-    id: "#AE-9480",
-    customer: "Yonas Kebede",
-    phone: "+251 933 678 901",
-    address: "Sarbet, Addis Ababa",
-    area: "Sarbet",
-    items: [
-      {
-        id: "dish-16",
-        name: "Special Pizza",
-        title: "Special Pizza",
-        amount: 1,
-        quantity: 1,
-        price: 1000,
-        image: "/images/Pizza.jpg",
-      },
-    ],
-    itemsList: [
-      {
-        id: "dish-16",
-        name: "Special Pizza",
-        title: "Special Pizza",
-        amount: 1,
-        quantity: 1,
-        price: 1000,
-        image: "/images/Pizza.jpg",
-      },
-    ],
-    itemsSummary: "Special Pizza x 1",
-    subtotal: 1000,
-    deliveryFee: 100,
-    discount: 100,
-    total: 1000,
-    status: "Canceled",
-    date: "Yesterday",
-    paymentMethod: "Card Payment",
-    instructions: "",
-  },
-];
+const INITIAL_ORDERS = [];
 
 const ShopContextProvider = ({ children }) => {
   // Dishes / Products state
@@ -174,7 +23,7 @@ const ShopContextProvider = ({ children }) => {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((o) => {
+          return parsed.filter((order) => !["#AE-9482", "#AE-9481", "#AE-9480"].includes(order.id)).map((o) => {
             const itemsArr = Array.isArray(o.items)
               ? o.items
               : Array.isArray(o.itemsList)
@@ -218,7 +67,7 @@ const ShopContextProvider = ({ children }) => {
   const [favorites, setFavorites] = useState(() => {
     try {
       const saved = localStorage.getItem("abron_favorites");
-      return saved ? JSON.parse(saved) : ["dish-1", "dish-4"];
+      return saved ? JSON.parse(saved) : [];
     } catch {
       return ["dish-1", "dish-4"];
     }
@@ -296,6 +145,19 @@ const ShopContextProvider = ({ children }) => {
         });
       })
       .catch((err) => console.error("Error loading menu data:", err));
+  }, []);
+
+  // Keep this browser tab current when another tab changes shared demo data.
+  useEffect(() => {
+    const syncSharedData = (event) => {
+      try {
+        if (event.key === "abron_orders") setOrders(JSON.parse(event.newValue || "[]"));
+        if (event.key === "abron_dishes") setProducts(JSON.parse(event.newValue || "[]"));
+        if (event.key === "abron_favorites") setFavorites(JSON.parse(event.newValue || "[]"));
+      } catch { /* Ignore malformed external storage updates. */ }
+    };
+    window.addEventListener("storage", syncSharedData);
+    return () => window.removeEventListener("storage", syncSharedData);
   }, []);
 
   // Persist products
@@ -642,16 +504,14 @@ const ShopContextProvider = ({ children }) => {
 
   // Orders Management CRUD
   const addOrder = (orderData) => {
-    const orderNum = `#AE-${Math.floor(1000 + Math.random() * 9000)}`;
+    const orderNum = `#AE-${Date.now().toString().slice(-8)}`;
     const now = new Date();
     const timeString = `Today, ${now.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     })}`;
 
-    const itemsArray =
-      cart.length > 0
-        ? cart.map((it) => {
+    const itemsArray = cart.map((it) => {
             const itemQty = Number(it.amount ?? it.quantity ?? 1) || 1;
             return {
               id: it.id,
@@ -662,18 +522,7 @@ const ShopContextProvider = ({ children }) => {
               price: it.price || 0,
               image: it.image || it.img || "/images/Doro.jpg",
             };
-          })
-        : [
-            {
-              id: "dish-1",
-              name: "Doro Wot Special",
-              title: "Doro Wot Special",
-              amount: 1,
-              quantity: 1,
-              price: total || 1350,
-              image: "/images/Doro.jpg",
-            },
-          ];
+          });
 
     const itemsSummary =
       itemsArray
@@ -682,20 +531,26 @@ const ShopContextProvider = ({ children }) => {
 
     const newOrder = {
       id: orderNum,
-      customer: orderData.customer || "Abebe Kebede",
-      phone: orderData.phone || "+251 911 234 567",
-      address: orderData.address || "Bole Medhanialem, Addis Ababa",
-      area: orderData.area || "Bole",
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
+      estimatedDelivery: new Date(now.getTime() + 35 * 60 * 1000).toISOString(),
+      customer: orderData.customer || "",
+      userId: orderData.userId || null,
+      customerEmail: orderData.customerEmail || "",
+      phone: orderData.phone || "",
+      address: orderData.address || "",
+      area: orderData.area || "",
       items: itemsArray,
       itemsList: itemsArray,
       itemsSummary,
-      subtotal,
-      deliveryFee,
-      discount,
-      total: total > 0 ? total : 1350,
+      subtotal: Number(orderData.subtotal ?? subtotal),
+      deliveryFee: Number(orderData.deliveryFee ?? deliveryFee),
+      discount: Number(orderData.discount ?? discount),
+      total: Number(orderData.total ?? total),
       status: "Preparing",
       date: timeString,
       paymentMethod: orderData.paymentMethod || "Cash on Delivery",
+      paymentInfo: orderData.paymentInfo || "",
       instructions: orderData.instructions || "",
     };
 
@@ -712,71 +567,6 @@ const ShopContextProvider = ({ children }) => {
       ),
     );
     toast.success(`Order ${orderId} updated to: ${newStatus}`);
-  };
-
-  // Quick order simulator for testing dynamic dashboard
-  const simulateNewOrder = () => {
-    const sampleCustomers = [
-      { name: "Almaz Kebede", phone: "+251 912 345 678", area: "Kazanchis" },
-      { name: "Dawit Haile", phone: "+251 913 456 789", area: "Piassa" },
-      { name: "Selamawit Bekele", phone: "+251 914 567 890", area: "Bole" },
-      { name: "Kidus Tadesse", phone: "+251 915 678 901", area: "Sarbet" },
-      { name: "Tigist Alemu", phone: "+251 916 789 012", area: "CMC" },
-    ];
-    const customer =
-      sampleCustomers[Math.floor(Math.random() * sampleCustomers.length)];
-    const randomDish1 = products[0] || { name: "Doro Wot", price: 380 };
-    const randomDish2 = products[1] || { name: "Beef Tibs", price: 300 };
-
-    const orderNum = `#AE-${Math.floor(1000 + Math.random() * 9000)}`;
-    const now = new Date();
-    const timeString = `Today, ${now.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`;
-
-    const itemsCost =
-      (Number(randomDish1.price) || 380) + (Number(randomDish2.price) || 300);
-    const simItems = [
-      {
-        id: randomDish1.id || "dish-1",
-        name: randomDish1.name,
-        title: randomDish1.name,
-        amount: 1,
-        quantity: 1,
-        price: randomDish1.price,
-      },
-      {
-        id: randomDish2.id || "dish-2",
-        name: randomDish2.name,
-        title: randomDish2.name,
-        amount: 1,
-        quantity: 1,
-        price: randomDish2.price,
-      },
-    ];
-    const simOrder = {
-      id: orderNum,
-      customer: customer.name,
-      phone: customer.phone,
-      address: `${customer.area}, Addis Ababa`,
-      area: customer.area,
-      items: simItems,
-      itemsList: simItems,
-      itemsSummary: `${randomDish1.name} x 1, ${randomDish2.name} x 1`,
-      subtotal: itemsCost,
-      deliveryFee: 100,
-      discount: 0,
-      total: itemsCost + 100,
-      status: "Preparing",
-      date: timeString,
-      paymentMethod: "Cash on Delivery",
-      instructions: "Simulated live customer order",
-    };
-
-    setOrders((prev) => [simOrder, ...prev]);
-    toast.success(`🎉 New Live Order received from ${customer.name}!`);
-    return simOrder;
   };
 
   return (
@@ -813,7 +603,6 @@ const ShopContextProvider = ({ children }) => {
         toggleDishAvailability,
         addOrder,
         updateOrderStatus,
-        simulateNewOrder,
       }}
     >
       {children}

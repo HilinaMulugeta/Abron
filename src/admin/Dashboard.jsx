@@ -12,7 +12,6 @@ import {
   FiEye,
   FiX,
   FiCheck,
-  FiRefreshCw,
 } from "react-icons/fi";
 import { GiChiliPepper } from "react-icons/gi";
 import { ShopContext } from "../components/ShopContext";
@@ -22,6 +21,7 @@ import DashboardCharts from "./components/DashboardCharts";
 export default function Dashboard() {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
+  const managerName = (() => { try { return JSON.parse(localStorage.getItem("admin_profile") || "{}").name?.split(/[ (]/)[0] || "Admin"; } catch { return "Admin"; } })();
   const {
     products,
     orders,
@@ -31,7 +31,6 @@ export default function Dashboard() {
     deleteDish,
     toggleDishAvailability,
     updateOrderStatus,
-    simulateNewOrder,
   } = useContext(ShopContext);
 
   // Modal States
@@ -318,7 +317,7 @@ export default function Dashboard() {
                 Admin Dashboard
               </p>
               <h1 className={`text-lg font-black ${isDarkMode ? 'text-[#f5f0e8]' : 'text-[#1f2f27]'} leading-tight`}>
-                Good day, Manager
+                Good day, {managerName}
               </h1>
               <span className={`text-xs ${isDarkMode ? 'text-[#dfe9df]' : 'text-[#5d6f67]'} font-medium`}>
                 Real-time operations & inventory control
@@ -327,13 +326,6 @@ export default function Dashboard() {
           </div>
           
           <div className="flex items-center gap-3">
-            <button
-              onClick={simulateNewOrder}
-              className={`px-3 py-2 ${isDarkMode ? 'bg-[#2b352d] hover:bg-[#20352e] text-[#f4c867]' : 'bg-[#f6e7c2] hover:bg-[#f0b84d] text-[#805b1c]'} rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer`}
-            >
-              <FiRefreshCw className="text-xs" />
-              Test Order
-            </button>
             <button 
               onClick={handleOpenAddDish}
               className={`px-4 py-2 ${isDarkMode ? 'bg-[#2f5d4a] hover:bg-[#1e4033]' : 'bg-[#2f5d4a] hover:bg-[#1e4033]'} text-white rounded-xl text-xs font-bold transition cursor-pointer`}

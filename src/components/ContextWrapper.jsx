@@ -49,7 +49,6 @@ export const withShopContext = (Component) => {
         toggleDishAvailability: () => {},
         addOrder: () => {},
         updateOrderStatus: () => {},
-        simulateNewOrder: () => {}
       };
       
       console.warn(`Component ${Component.displayName || Component.name} is using ShopContext but provider is not available. Using defaults.`);
@@ -113,7 +112,6 @@ export const useShopContext = () => {
       toggleDishAvailability: () => {},
       addOrder: () => {},
       updateOrderStatus: () => {},
-      simulateNewOrder: () => {}
     };
   }
   

@@ -89,6 +89,11 @@ function Footer() {
                   My Profile & Favorites
                 </Link>
               </li>
+              <li>
+                <Link to="/delivery-partner" className="hover:text-white transition">
+                  Become a delivery partner
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -1,33 +1,28 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import {
   FiCheck,
   FiClock,
   FiMapPin,
-  FiPhone,
-  FiMessageSquare,
   FiTruck,
   FiShoppingBag,
 } from "react-icons/fi";
 import { Link, useLocation } from "react-router-dom";
-import { toast } from "react-toastify";
 import { ShopContext } from "../components/ShopContext";
 import MobileAppShell from "../components/MobileAppShell";
+import { useAuth } from "../auth/AuthContext";
 
 export default function OrderConfirmed() {
   const location = useLocation();
-  const { orders, updateOrderStatus } = useContext(ShopContext);
+  const { orders } = useContext(ShopContext);
+  const { user } = useAuth();
 
   // Get active order from router state or fall back to most recent order
   const passedOrder = location.state?.order;
   const currentOrder =
     (passedOrder && orders.find((o) => o.id === passedOrder.id)) ||
-    orders[0] || {
-      id: "#AE-9482",
-      customer: "Abebe ",
-      address: "Bole Medhanialem, Addis Ababa",
-      status: "Preparing",
-      total: 1480,
-    };
+    orders.find((order) => user && (order.userId === user.id || order.customerEmail === user.email)) || null;
+
+  if (!currentOrder) return <MobileAppShell><div className="mx-auto max-w-lg px-4 py-16 text-center"><h1 className="text-2xl font-black">No order to track yet</h1><p className="mt-2 text-sm text-gray-500">Place an order and its live status will appear here.</p><Link to="/menu" className="mt-5 inline-block rounded-xl bg-green-700 px-5 py-3 text-sm font-bold text-white">Explore the menu</Link></div></MobileAppShell>;
 
   const steps = [
     { label: "Order Placed", icon: FiCheck },
@@ -50,13 +45,6 @@ export default function OrderConfirmed() {
   };
 
   const currentStepIdx = getStepIndex(currentOrder.status);
-
-  const handleAdvanceStatus = () => {
-    const nextStatuses = ["Preparing", "On the Way", "Delivered"];
-    const nextStatus =
-      nextStatuses[currentStepIdx] || "Delivered";
-    updateOrderStatus(currentOrder.id, nextStatus);
-  };
 
   return (
     <MobileAppShell>
@@ -85,7 +73,7 @@ export default function OrderConfirmed() {
           </div>
           <div className="flex justify-between items-center">
             <span>Est. Delivery Time</span>
-            <strong className="text-green-700 font-bold">30 – 45 mins</strong>
+          <strong className="text-green-700 font-bold">{currentOrder.estimatedDelivery ? new Date(currentOrder.estimatedDelivery).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "30–45 mins"}</strong>
           </div>
           <div className="flex justify-between items-center">
             <span>Delivery Location</span>
@@ -193,55 +181,9 @@ export default function OrderConfirmed() {
             />
           </div>
 
-          {/* Quick status advance button for simulation */}
-          {currentStepIdx < steps.length - 1 && (
-            <div className="mt-4 pt-3 border-t border-gray-100 text-center">
-              <button
-                type="button"
-                onClick={handleAdvanceStatus}
-                className="text-[11px] text-green-600 font-bold hover:underline cursor-pointer"
-              >
-                + Advance Status for Demo (to &ldquo;{steps[currentStepIdx + 1]?.label}&rdquo;)
-              </button>
-            </div>
-          )}
         </div>
 
-        {/* Delivery Driver / Hero Card matching reference */}
-        <div className="bg-white border border-gray-200/90 rounded-2xl p-4 shadow-xs flex items-center justify-between gap-3 mb-6 text-left">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center font-bold text-amber-800 text-sm">
-              DK
-            </div>
-            <div>
-              <strong className="text-xs sm:text-sm font-bold text-gray-900 block">
-                Dawit Kifile
-              </strong>
-              <span className="text-[10px] text-gray-400 block font-medium">
-                Your delivery hero
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => toast.info("Calling driver Dawit Kifile (+251 911 888 777)...")}
-              className="w-8 h-8 rounded-full bg-green-50 text-green-700 hover:bg-green-100 flex items-center justify-center text-sm transition cursor-pointer"
-              title="Call driver"
-              aria-label="Call driver"
-            >
-              <FiPhone />
-            </button>
-            <button
-              onClick={() => toast.info("Opening live chat with driver Dawit...")}
-              className="w-8 h-8 rounded-full bg-gray-50 text-gray-700 hover:bg-gray-100 flex items-center justify-center text-sm transition cursor-pointer"
-              title="Message driver"
-              aria-label="Message driver"
-            >
-              <FiMessageSquare />
-            </button>
-          </div>
-        </div>
+        <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-4 text-left"><strong className="text-sm text-gray-900">Delivery partner</strong><p className="mt-1 text-xs text-gray-500">{currentOrder.driver?.name ? `${currentOrder.driver.name} is assigned to your delivery.` : "We’ll show your delivery partner here once one is assigned."}</p></div>
 
         {/* Action Buttons matching reference */}
         <div className="space-y-2.5">

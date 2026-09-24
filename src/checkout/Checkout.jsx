@@ -25,6 +25,7 @@ export default function Checkout() {
     subtotal = 0, 
     deliveryFee = 0, 
     discount = 0, 
+    promo = null,
     addOrder, 
     setSelectedArea, 
     AREA_DELIVERY_FEES = {} 
@@ -32,25 +33,21 @@ export default function Checkout() {
   const navigate = useNavigate();
   
   // Authentication check - HOOK MUST BE CALLED UNCONDITIONALLY
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, updateProfile } = useAuth();
   
   // ALL STATE HOOKS MUST BE CALLED UNCONDITIONALLY
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [deliveryArea, setDeliveryArea] = useState("Bole");
-  const [address, setAddress] = useState("Bole Medhanialem, Addis Ababa");
+  const [deliveryArea, setDeliveryArea] = useState(user?.area || "Bole");
+  const [address, setAddress] = useState(user?.address || "");
   const [instructions, setInstructions] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("Telebirr");
+  const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   
   // ALL DYNAMIC PAYMENT FORM STATES
-  const [telebirrPhone, setTelebirrPhone] = useState("0911 234 567");
-  const [cbeBirrAccount, setCbeBirrAccount] = useState("0911 234 567");
-  const [cardNumber, setCardNumber] = useState("4111 •••• •••• 5678");
-  const [cardHolder, setCardHolder] = useState("Hilina Mulugeta");
-  const [cardExpiry, setCardExpiry] = useState("08/28");
-  const [cardCvv, setCardCvv] = useState("•••");
+  const [telebirrPhone, setTelebirrPhone] = useState("");
+  const [cbeBirrAccount, setCbeBirrAccount] = useState("");
   const [cashChangeOption, setCashChangeOption] = useState("Exact change");
 
   // ALL USEEFFECT HOOKS MUST BE CALLED UNCONDITIONALLY
@@ -71,6 +68,8 @@ export default function Checkout() {
     if (user) {
       setFullName(user.name || "");
       setPhoneNumber(user.phone || "");
+      setDeliveryArea(user.area || "Bole");
+      setAddress(user.address || "");
     }
   }, [user]);
 
@@ -146,9 +145,14 @@ export default function Checkout() {
   ];
 
   // Feature 10: Form Validation before submit
-  const handlePlaceOrder = (e) => {
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
 
+    if (!cart.length) {
+      toast.error("Your cart is empty. Add a dish before checking out.");
+      navigate("/menu");
+      return;
+    }
     if (!fullName || fullName.trim().length < 3) {
       toast.error("Please enter your full name (minimum 3 characters).");
       return;
@@ -169,14 +173,30 @@ export default function Checkout() {
     let paymentInfo = "";
     if (paymentMethod === "Telebirr") paymentInfo = `Telebirr (${telebirrPhone})`;
     else if (paymentMethod === "CBE Birr") paymentInfo = `CBE Birr (${cbeBirrAccount})`;
-    else if (paymentMethod === "Card Payment") paymentInfo = `Card ending in ${cardNumber.slice(-4)}`;
+    else if (paymentMethod === "Card on Delivery") paymentInfo = "Card on delivery";
     else paymentInfo = `Cash (${cashChangeOption})`;
 
+    try {
+    await updateProfile({ name: fullName.trim(), phone: phoneNumber.trim(), area: deliveryArea, address: address.trim() });
+    } catch (error) {
+      toast.error(error.message || "Could not save your delivery details.");
+      return;
+    }
+
+    const areaFee = promo?.type === "free_shipping" ? 0 : (AREA_DELIVERY_FEES[deliveryArea] ?? deliveryFee);
+    const orderSubtotal = cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.amount ?? item.quantity) || 1), 0);
+    const orderDiscount = discount;
     const newOrder = addOrder({
       customer: fullName.trim(),
       phone: phoneNumber.trim(),
       address: address.trim(),
       area: deliveryArea,
+      userId: user.id,
+      customerEmail: user.email,
+      subtotal: orderSubtotal,
+      deliveryFee: areaFee,
+      discount: orderDiscount,
+      total: Math.max(0, orderSubtotal + areaFee - orderDiscount),
       paymentMethod,
       paymentInfo,
       instructions,
@@ -217,7 +237,7 @@ export default function Checkout() {
                   Delivery Address
                 </span>
                 <strong className="text-xs sm:text-sm font-bold text-gray-900 block mt-0.5">
-                  {address}
+              {address || `${deliveryArea}, Addis Ababa`}
                 </strong>
               </div>
             </div>
@@ -273,18 +293,7 @@ export default function Checkout() {
               }}
               className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 focus:outline-none focus:border-green-500 shadow-xs font-medium cursor-pointer"
             >
-              <option value="Bole">Bole (Medhanialem, Atlas) — ETB 80</option>
-              <option value="Kazanchis">
-                Kazanchis (ECA, Intercontinental) — ETB 100
-              </option>
-              <option value="Sarbet">
-                Sarbet (Vatican, Old Airport) — ETB 110
-              </option>
-              <option value="Piassa">
-                Piassa (Churchill, Arat Kilo) — ETB 120
-              </option>
-              <option value="Gerji">Gerji (Imperial, Jackros) — ETB 130</option>
-              <option value="CMC">CMC (Gurd Shola, Sunshine) — ETB 150</option>
+              {Object.entries(AREA_DELIVERY_FEES).map(([area, fee]) => <option key={area} value={area}>{area} — ETB {fee}</option>)}
             </select>
           </div>
 
@@ -319,7 +328,7 @@ export default function Checkout() {
               {[
                 { label: "Telebirr", icon: FiSmartphone, badge: "Instant" },
                 { label: "CBE Birr", icon: FiCheckCircle, badge: "USSD" },
-                { label: "Card Payment", icon: FiCreditCard, badge: "Chapa" },
+                { label: "Card on Delivery", icon: FiCreditCard, badge: "At handoff" },
                 {
                   label: "Cash on Delivery",
                   icon: FiDollarSign,
@@ -368,10 +377,10 @@ export default function Checkout() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sky-900 font-extrabold text-xs">
                     <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-                    <span>Telebirr Instant Gateway</span>
+                    <span>Telebirr payment preference</span>
                   </div>
                   <span className="text-[10px] bg-sky-600 text-white px-2 py-0.5 rounded-full font-bold">
-                    Official
+                    Confirm after order
                   </span>
                 </div>
 
@@ -400,10 +409,7 @@ export default function Checkout() {
                     How to pay:
                   </p>
                   <p className="text-gray-600 text-[10px] leading-relaxed pl-4">
-                    Upon clicking &ldquo;Place Order&rdquo;, a USSD push
-                    notification will be sent directly to your phone. Unlock
-                    your screen and enter your 4-digit Telebirr PIN to confirm
-                    ETB {total.toLocaleString()}.
+                    Your order will be placed with Telebirr selected. Abron will confirm payment instructions with you; no payment is charged here.
                   </p>
                 </div>
               </div>
@@ -439,90 +445,16 @@ export default function Checkout() {
                 <div className="bg-white/80 rounded-xl p-2.5 text-[11px] text-purple-950 border border-purple-200/60 space-y-1">
                   <p className="font-semibold flex items-center gap-1.5">
                     <FiCheckCircle className="text-purple-600" />
-                    USSD Confirmation:
+                    CBE Birr payment preference:
                   </p>
                   <p className="text-gray-600 text-[10px] leading-relaxed pl-4">
-                    Dial <b>*847#</b> or approve in the CBE Birr app after
-                    placing order. Merchant Code: <b>ABRON-882</b>.
+                    Abron will confirm payment instructions after you place the order. No payment is charged here.
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Dynamic Form for Card Payment (Chapa / Visa / Mastercard) */}
-            {paymentMethod === "Card Payment" && (
-              <div className="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 space-y-3 animate-in fade-in-50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-amber-900 font-extrabold text-xs">
-                    <FiCreditCard className="text-amber-600 text-base" />
-                    <span>Chapa / Visa / MasterCard</span>
-                  </div>
-                  <span className="text-[10px] bg-amber-600 text-white px-2 py-0.5 rounded-full font-bold">
-                    256-bit SSL
-                  </span>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                    Cardholder Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={cardHolder}
-                    onChange={(e) => setCardHolder(e.target.value)}
-                    placeholder="Name on card"
-                    className="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-xs text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                    Card Number
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    maxLength={19}
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
-                    placeholder="4111 2222 3333 4444"
-                    className="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-xs text-gray-900 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                      Expiry Date
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      maxLength={5}
-                      value={cardExpiry}
-                      onChange={(e) => setCardExpiry(e.target.value)}
-                      placeholder="MM/YY"
-                      className="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-xs text-gray-900 font-mono text-center font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                      CVV / CVC
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      maxLength={4}
-                      value={cardCvv}
-                      onChange={(e) => setCardCvv(e.target.value)}
-                      placeholder="123"
-                      className="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-xs text-gray-900 font-mono text-center font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+            {paymentMethod === "Card on Delivery" && <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">Pay by card when the delivery arrives. Card details are not collected on this page.</p>}
 
             {/* Dynamic Form for Cash on Delivery */}
             {paymentMethod === "Cash on Delivery" && (
@@ -618,6 +550,10 @@ export default function Checkout() {
               <h3 className="text-base font-bold text-gray-900 mb-3">
                 Select Delivery Location
               </h3>
+              <label className="block text-xs font-semibold text-gray-700 mb-3">Street address or nearby landmark
+                <input value={address} onChange={(event) => setAddress(event.target.value)} placeholder="Building, street, or landmark" className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm" />
+              </label>
+              <button type="button" onClick={() => setAddressModalOpen(false)} className="w-full rounded-lg bg-green-700 px-3 py-2 text-xs font-bold text-white mb-3">Save address</button>
               <div className="space-y-2 text-xs">
                 {popularAddresses.map((addr) => (
                   <button
@@ -640,6 +576,7 @@ export default function Checkout() {
       {/* Login/Signup Modal */}
       <LoginSignupModal
         isOpen={showLoginModal}
+        initialMode="signup"
         onClose={(redirectPath) => {
           setShowLoginModal(false);
           // If login was successful (redirectPath provided), stay on checkout

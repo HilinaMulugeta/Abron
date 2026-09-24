@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiX, FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone } from 'react-icons/fi';
 import { useTheme } from '../theme/ThemeContext';
 import { getThemeClass } from '../theme/components';
@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 
 const ThemedLoginSignupModal = ({ isOpen, onClose, initialMode = 'login' }) => {
   const { isDarkMode } = useTheme();
-  const { login, register } = useAuth();
+  const { loginWithCredentials, signup } = useAuth();
   
   const [mode, setMode] = useState(initialMode);
   const [showPassword, setShowPassword] = useState(false);
@@ -20,11 +20,15 @@ const ThemedLoginSignupModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     name: '',
     email: '',
     phone: '',
+    area: 'Bole',
+    address: '',
     password: '',
     confirmPassword: ''
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => { setMode(initialMode); }, [initialMode, isOpen]);
 
   if (!isOpen) return null;
 
@@ -51,6 +55,9 @@ const ThemedLoginSignupModal = ({ isOpen, onClose, initialMode = 'login' }) => {
       }
       if (!formData.phone.trim()) {
         newErrors.phone = 'Phone number is required';
+      }
+      if (!formData.address.trim() || formData.address.trim().length < 5) {
+        newErrors.address = 'Add a street address or nearby landmark';
       }
       if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = 'Passwords do not match';
@@ -85,18 +92,20 @@ const ThemedLoginSignupModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     
     try {
       if (mode === 'login') {
-        await login(formData.email, formData.password);
+        await loginWithCredentials(formData.email, formData.password);
         toast.success('Welcome back to Abron!');
       } else {
-        await register({
+        await signup({
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          password: formData.password
+          password: formData.password,
+          area: formData.area,
+          address: formData.address
         });
         toast.success('Account created successfully! Welcome to Abron!');
       }
-      onClose();
+      onClose('/checkout');
     } catch (error) {
       toast.error(error.message || 'Something went wrong');
     } finally {
@@ -111,6 +120,8 @@ const ThemedLoginSignupModal = ({ isOpen, onClose, initialMode = 'login' }) => {
       name: '',
       email: formData.email, // Keep email when switching
       phone: '',
+      area: 'Bole',
+      address: '',
       password: '',
       confirmPassword: ''
     });
@@ -175,6 +186,12 @@ const ThemedLoginSignupModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                 placeholder="+251 911 234 567"
                 required
               />
+              <label className="block text-sm font-semibold">Delivery area
+                <select name="area" value={formData.area} onChange={handleInputChange} className="mt-1 w-full rounded-xl border border-[#e8dcc5] dark:border-[#2d413b] bg-white dark:bg-[#14261a] px-3 py-2.5 text-sm">
+                  {['Bole', 'Kazanchis', 'Sarbet', 'Piassa', 'Gerji', 'CMC'].map((area) => <option key={area} value={area}>{area}</option>)}
+                </select>
+              </label>
+              <ThemedInput label="Street address / landmark" name="address" type="text" value={formData.address} onChange={handleInputChange} error={errors.address} placeholder="House, building, or nearby landmark" required />
             </>
           )}
           

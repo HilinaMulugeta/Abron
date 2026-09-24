@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import {
   FiX,
   FiClock,
-  FiStar,
   FiShoppingBag,
   FiHeart,
   FiExternalLink,
@@ -111,8 +110,8 @@ export default function DishDetailModal({ dish, onClose }) {
 
           {/* Badges Bar */}
           <div className="flex items-center gap-3 py-2 border-y border-gray-100 dark:border-[#213828] text-xs text-gray-600 dark:text-gray-300">
-            <span className="flex items-center gap-1 font-bold text-amber-500">
-              <FiStar className="fill-current text-xs" /> 4.9 (120+ reviews)
+            <span className="flex items-center gap-1 font-bold text-green-700 dark:text-green-400">
+              {dish.availableToday === false ? "Currently unavailable" : "Available to order"}
             </span>
             <span>•</span>
             <span className="flex items-center gap-1 font-medium">

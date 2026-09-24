@@ -19,12 +19,13 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [profile, setProfile] = useState(() =>
-    JSON.parse(
-      localStorage.getItem("admin_profile") ||
-        '{"name":"Yazachew(Manager)","initials":"YZ","role":"Admin account","email":"admin@abron.com"}',
-    ),
-  );
+  const [profile, setProfile] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("admin_profile") || '{"name":"Restaurant Manager","initials":"RM","role":"Admin account","email":"admin@abron.com"}');
+    } catch {
+      return { name: "Restaurant Manager", initials: "RM", role: "Admin account", email: "admin@abron.com" };
+    }
+  });
 
   const handleLogout = () => {
     logout();
@@ -116,10 +117,10 @@ export default function AdminLayout() {
               </div>
               <span className="hidden sm:inline">
                 <strong className="text-xs font-bold text-[#1f2f27] dark:text-[#f5f0e8]">
-                  Yazachew (Manager Account)
+                  {profile.name || "Restaurant Manager"}
                 </strong>
                 <small className="text-[10px] text-[#5d6f67] dark:text-[#dfe9df] block">
-                  {"admin@abron.com"}
+                  {profile.email || ""}
                 </small>
               </span>
             </div>

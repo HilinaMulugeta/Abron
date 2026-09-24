@@ -20,6 +20,7 @@ import OrderHistory from "./orders/OrderHistory";
 import Search from "./pages/Search";
 import FavoritesPage from "./favorites/FavoritesPage";
 import NotFound from "./pages/NotFound";
+import DeliveryPartner from "./pages/DeliveryPartner";
 
 const App = () => {
   return (
@@ -50,6 +51,7 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/orders" element={<OrderHistory />} />
+          <Route path="/delivery-partner" element={<DeliveryPartner />} />
           <Route path="/search" element={<Search />} />
           <Route path="/product/:id" element={<ProductDetails />} />
 

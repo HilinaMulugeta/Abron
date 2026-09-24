@@ -1,34 +1,39 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  FiSearch,
-  FiClock,
   FiStar,
   FiArrowRight,
   FiZap,
-  FiCheckCircle,
 } from "react-icons/fi";
 import { GiMeal, GiChiliPepper } from "react-icons/gi";
 import { useTheme } from "../theme/ThemeContext";
 import { getThemeClass } from "../theme/components";
+import { useAuth } from "../auth/AuthContext";
+import { ShopContext } from "./ShopContext";
 
 function Hero() {
   const navigate = useNavigate();
   const [heroSearch, setHeroSearch] = useState("");
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
+  const { products = [] } = useContext(ShopContext) || {};
+  const featuredDish = products.find((item) => item.availableToday !== false) || null;
+  const userName = user?.name || "Guest";
 
-  const headingClasses = getThemeClass('heading', 'primary', isDarkMode);
-  const textClasses = getThemeClass('text', 'primary', isDarkMode);
-  const mutedClasses = getThemeClass('text', 'muted', isDarkMode);
-  const inputClasses = getThemeClass('input', 'base', isDarkMode);
+  const headingClasses = getThemeClass("heading", "primary", isDarkMode);
+  const textClasses = getThemeClass("text", "primary", isDarkMode);
+  const mutedClasses = getThemeClass("text", "muted", isDarkMode);
+  const inputClasses = getThemeClass("input", "base", isDarkMode);
 
-  // Determine greeting based on current local hour
+  // Determine greeting based on current local hour and the logged-in user name
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning, Hilina";
-    if (hour < 18) return "Good Afternoon, Hilina";
-    return "Good Evening, Hilina";
-  }, []);
+    const name = userName.trim() || "Guest";
+
+    if (hour < 12) return `Good Morning, ${name}`;
+    if (hour < 18) return `Good Afternoon, ${name}`;
+    return `Good Evening, ${name}`;
+  }, [userName]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -44,10 +49,14 @@ function Hero() {
       {/* Personalized Greeting Header - Profile.jsx Style */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className={`text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight ${headingClasses}`}>
+          <h1
+            className={`text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight ${headingClasses}`}
+          >
             {greeting}
           </h1>
-          <p className={`text-xs sm:text-sm font-medium mt-0.5 ${mutedClasses}`}>
+          <p
+            className={`text-xs sm:text-sm font-medium mt-0.5 ${mutedClasses}`}
+          >
             What would you like to eat today?
           </p>
         </div>
@@ -75,27 +84,45 @@ function Hero() {
 
       {/* Profile.jsx Style Stats Cards */}
       <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className={`${isDarkMode ? 'bg-[#182b25] border-[#2d413b]' : 'bg-[#fffaf4] border-[#e8dcc5]'} p-3.5 rounded-xl border shadow-[0_10px_20px_rgba(24,35,30,0.05)] text-center hover:border-[#f0b84d] transition group cursor-pointer`}>
-          <strong className={`block text-xl font-black ${isDarkMode ? 'text-[#f5f0e8]' : 'text-[#1f2f27]'} group-hover:text-[#2f5d4a]`}>
-            50+
+        <div
+          className={`${isDarkMode ? "bg-[#182b25] border-[#2d413b]" : "bg-[#fffaf4] border-[#e8dcc5]"} p-3.5 rounded-xl border shadow-[0_10px_20px_rgba(24,35,30,0.05)] text-center hover:border-[#f0b84d] transition group cursor-pointer`}
+        >
+          <strong
+            className={`block text-xl font-black ${isDarkMode ? "text-[#f5f0e8]" : "text-[#1f2f27]"} group-hover:text-[#2f5d4a]`}
+          >
+            {products.length}
           </strong>
-          <small className={`text-[11px] font-semibold ${isDarkMode ? 'text-[#c9d9d0]' : 'text-[#5d6f67]'}`}>
-            Dishes
+          <small
+            className={`text-[11px] font-semibold ${isDarkMode ? "text-[#c9d9d0]" : "text-[#5d6f67]"}`}
+          >
+            Menu dishes
           </small>
         </div>
-        <div className={`${isDarkMode ? 'bg-[#182b25] border-[#2d413b]' : 'bg-[#fffaf4] border-[#e8dcc5]'} p-3.5 rounded-xl border shadow-[0_10px_20px_rgba(24,35,30,0.05)] text-center hover:border-[#f0b84d] transition group cursor-pointer`}>
-          <strong className={`block text-xl font-black ${isDarkMode ? 'text-[#f4c867]' : 'text-[#d56a2b]'}`}>
-            4.9★
+        <div
+          className={`${isDarkMode ? "bg-[#182b25] border-[#2d413b]" : "bg-[#fffaf4] border-[#e8dcc5]"} p-3.5 rounded-xl border shadow-[0_10px_20px_rgba(24,35,30,0.05)] text-center hover:border-[#f0b84d] transition group cursor-pointer`}
+        >
+          <strong
+            className={`block text-xl font-black ${isDarkMode ? "text-[#f4c867]" : "text-[#d56a2b]"}`}
+          >
+            {products.filter((item) => item.availableToday !== false).length}
           </strong>
-          <small className={`text-[11px] font-semibold ${isDarkMode ? 'text-[#c9d9d0]' : 'text-[#5d6f67]'}`}>
-            Rating
+          <small
+            className={`text-[11px] font-semibold ${isDarkMode ? "text-[#c9d9d0]" : "text-[#5d6f67]"}`}
+          >
+            Available now
           </small>
         </div>
-        <div className={`${isDarkMode ? 'bg-[#182b25] border-[#2d413b]' : 'bg-[#fffaf4] border-[#e8dcc5]'} p-3.5 rounded-xl border shadow-[0_10px_20px_rgba(24,35,30,0.05)] text-center hover:border-[#f0b84d] transition group cursor-pointer`}>
-          <strong className={`block text-xl font-black ${isDarkMode ? 'text-[#f4c867]' : 'text-[#e0a632]'}`}>
-            30m
+        <div
+          className={`${isDarkMode ? "bg-[#182b25] border-[#2d413b]" : "bg-[#fffaf4] border-[#e8dcc5]"} p-3.5 rounded-xl border shadow-[0_10px_20px_rgba(24,35,30,0.05)] text-center hover:border-[#f0b84d] transition group cursor-pointer`}
+        >
+          <strong
+            className={`block text-xl font-black ${isDarkMode ? "text-[#f4c867]" : "text-[#e0a632]"}`}
+          >
+            30–45m
           </strong>
-          <small className={`text-[11px] font-semibold ${isDarkMode ? 'text-[#c9d9d0]' : 'text-[#5d6f67]'}`}>
+          <small
+            className={`text-[11px] font-semibold ${isDarkMode ? "text-[#c9d9d0]" : "text-[#5d6f67]"}`}
+          >
             Delivery
           </small>
         </div>
@@ -113,7 +140,7 @@ function Hero() {
             {/* Profile.jsx Style Promo Chip */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs text-[#f4c867] font-semibold">
               <span className="flex h-2 w-2 rounded-full bg-[#f4c867] animate-pulse" />
-              <span>🔥 Special 20% OFF Weekend Feast • Code: ABRON20</span>
+              <span>Freshly prepared in Addis Ababa • Delivery from ETB 80</span>
             </div>
 
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
@@ -131,9 +158,9 @@ function Hero() {
             <div className="grid grid-cols-3 gap-3 pt-2 max-w-lg">
               <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 text-center">
                 <div className="flex items-center justify-center gap-1 text-[#f4c867] font-bold text-xs sm:text-sm">
-                  <FiStar className="fill-current text-xs" /> 4.9
+                  <FiStar className="fill-current text-xs" /> {products.length}
                 </div>
-                <p className="text-[10px] text-gray-400 mt-0.5">Top Rated</p>
+                <p className="text-[10px] text-gray-400 mt-0.5">Menu choices</p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 text-center">
                 <div className="flex items-center justify-center gap-1 text-[#f4c867] font-bold text-xs sm:text-sm">
@@ -174,34 +201,42 @@ function Hero() {
             <div className="relative w-full max-w-sm">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 aspect-4/3 sm:aspect-square">
                 <img
-                  src="/images/Doro.jpg"
-                  alt="Authentic Doro Wot"
+                  src={featuredDish?.image || "/images/Doro.jpg"}
+                  alt={featuredDish?.name || "Authentic Ethiopian food"}
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
                 {/* Profile.jsx Style Floating Dish Tag */}
-                <div className={`absolute bottom-4 left-4 right-4 ${isDarkMode ? 'bg-[#182b25]/95 border-[#2b3f37]' : 'bg-[#fffaf4]/95 border-[#eadfc8]'} backdrop-blur-md rounded-xl p-3 shadow-lg border flex items-center justify-between`}>
+                <div
+                  className={`absolute bottom-4 left-4 right-4 ${isDarkMode ? "bg-[#182b25]/95 border-[#2b3f37]" : "bg-[#fffaf4]/95 border-[#eadfc8]"} backdrop-blur-md rounded-xl p-3 shadow-lg border flex items-center justify-between`}
+                >
                   <div>
                     <div className="flex items-center gap-1">
-                      <span className={`text-xs font-extrabold ${isDarkMode ? 'text-[#f5f0e8]' : 'text-[#1f2f27]'}`}>
-                        Doro Wot Special
+                      <span
+                        className={`text-xs font-extrabold ${isDarkMode ? "text-[#f5f0e8]" : "text-[#1f2f27]"}`}
+                      >
+                        {featuredDish?.name || "Discover the menu"}
                       </span>
                       <span className="flex items-center text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded">
                         <GiChiliPepper /> Spicy
                       </span>
                     </div>
-                    <p className={`text-[10px] ${isDarkMode ? 'text-[#dfe9df]' : 'text-[#5d6f67]'} mt-0.5`}>
-                      Traditional stew with hard-boiled egg
+                    <p
+                      className={`text-[10px] ${isDarkMode ? "text-[#dfe9df]" : "text-[#5d6f67]"} mt-0.5`}
+                    >
+                      {featuredDish?.description || "Freshly prepared Ethiopian favorites"}
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className={`text-xs font-extrabold ${isDarkMode ? 'text-[#f4c867]' : 'text-[#2f5d4a]'} block`}>
-                      ETB 380
+                    <span
+                      className={`text-xs font-extrabold ${isDarkMode ? "text-[#f4c867]" : "text-[#2f5d4a]"} block`}
+                    >
+                      {featuredDish ? `ETB ${Number(featuredDish.price).toLocaleString()}` : "View menu"}
                     </span>
                     <a
                       href="#menu-section"
-                      className={`text-[10px] ${isDarkMode ? 'text-[#f4c867]' : 'text-[#2f5d4a]'} font-bold hover:underline`}
+                      className={`text-[10px] ${isDarkMode ? "text-[#f4c867]" : "text-[#2f5d4a]"} font-bold hover:underline`}
                     >
                       View +
                     </a>
@@ -216,10 +251,10 @@ function Hero() {
                 </div>
                 <div>
                   <p className="text-[11px] font-bold text-white leading-tight">
-                    Chef&rsquo;s Special
+                    Made to order
                   </p>
                   <p className="text-[9px] text-[#f4c867]">
-                    Most Ordered Today
+                    Local Addis delivery
                   </p>
                 </div>
               </div>
@@ -229,8 +264,6 @@ function Hero() {
       </div>
     </div>
   );
-
-
 }
 
 export default Hero;

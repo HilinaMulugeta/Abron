@@ -7,10 +7,12 @@ Abron is a React food ordering web app for browsing Ethiopian dishes, managing a
 - Browse and search dishes by category, availability, and other filters.
 - View dish details, save favorites, and add items to the cart.
 - Complete checkout with delivery details and payment options.
+- Create an account during checkout with name, phone, and delivery location; area selection updates the delivery fee.
+- Apply to become a delivery partner from the footer.
 - View order history and order status.
 - Manage dishes, availability, and orders from the admin dashboard.
 - Switch between light and dark themes; the theme preference is saved in the browser.
-- Keep cart, favorites, menu, and order data in browser storage for local use.
+- Keep cart, favorites, menu, customer accounts, driver applications, and orders in browser storage for local use; updates sync between open tabs in the same browser.
 
 ## Requirements
 
@@ -32,7 +34,7 @@ Open `/admin/login` and sign in with the demo account:
 - Email: `admin@abron.com`
 - Password: `admin123`
 
-The admin dashboard includes sales summaries, charts, dish inventory controls, and an order tracker. Authentication and data are implemented as local demo behavior; use a secure server-side auth and data service before deploying this app for real operations.
+The admin dashboard includes sales summaries, charts, dish inventory controls, and an order tracker. Authentication and data are local demo behavior. Browser storage syncs tabs on the same device, but it does not provide shared multi-device real-time data or production security. The demo admin account is not server-authenticated. Configure a Node/Express API and MySQL database before using the app for real customer accounts, operations, or payments. Checkout records a payment preference only; it does not charge cards or trigger Telebirr/CBE transactions.
 
 ## Routes
 

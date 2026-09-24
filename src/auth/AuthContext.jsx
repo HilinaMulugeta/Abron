@@ -3,8 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 // 1. Create the Auth Context
 const AuthContext = createContext(null);
 
-// Simulate API delay
-const simulateApiDelay = (ms = 1000) => new Promise(resolve => setTimeout(resolve, ms));
+const simulateApiDelay = (ms = 150) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Mock user database (in real app, this would be server-side)
 const getUsersFromStorage = () => {
@@ -53,6 +52,14 @@ export function AuthProvider({ children }) {
       }
     }
     setLoading(false);
+    const syncSession = (event) => {
+      if (event.key === "abron_user" || event.key === "abron_token") {
+        const saved = localStorage.getItem("abron_user");
+        try { setUser(saved ? JSON.parse(saved) : null); } catch { setUser(null); }
+      }
+    };
+    window.addEventListener("storage", syncSession);
+    return () => window.removeEventListener("storage", syncSession);
   }, []);
 
   // Login function with email/password
@@ -99,7 +106,7 @@ export function AuthProvider({ children }) {
     try {
       await simulateApiDelay(1000);
       
-      const { email, password, name, phone } = userData;
+      const { email, password, name, phone, area = "", address = "" } = userData;
       
       // Get existing users
       const users = getUsersFromStorage();
@@ -120,6 +127,9 @@ export function AuthProvider({ children }) {
         password, // In real app, this would be hashed
         name,
         phone,
+        area,
+        address,
+        role: "customer",
         createdAt: new Date().toISOString(),
         preferences: {
           newsletter: true,
@@ -182,12 +192,13 @@ export function AuthProvider({ children }) {
       
       // Update user data
       const updatedUser = {
-        ...users[userIndex],
+        ...(users[userIndex] || user),
         ...updates,
         updatedAt: new Date().toISOString()
       };
       
-      users[userIndex] = updatedUser;
+      if (userIndex < 0) users.push(updatedUser);
+      else users[userIndex] = updatedUser;
       saveUsersToStorage(users);
       
       // Remove password from updated user data
@@ -211,11 +222,13 @@ export function AuthProvider({ children }) {
     loading,
     authLoading,
     loginWithCredentials: login,
+    register: signup,
     signup,
     logout,
     updateProfile,
     // Legacy support
-    login: loginWithUserData,
+    login: login,
+    loginWithUserData,
     isAuthenticated: !!user
   };
 
